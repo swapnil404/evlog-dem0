@@ -1,7 +1,7 @@
-import { eq, like, and, sql, desc } from "drizzle-orm";
+import { eq, like, and, sql, desc, or } from "drizzle-orm";
 import { z } from "zod";
 import { publicProcedure, router } from "../index";
-import { logs } from "@my-better-t-app/db/schema/logs";
+import { logs } from "@my-better-t-app/db/schema";
 
 const logSelect = {
   id: logs.id,
@@ -18,6 +18,13 @@ const logSelect = {
   data: logs.data,
   created_at: logs.created_at,
 };
+
+const timeRangeMinutes = {
+  "30m": 30,
+  "1h": 60,
+  "24h": 1440,
+  "7d": 10080,
+} as const;
 
 export const logsRouter = router({
   getLogs: publicProcedure
@@ -68,6 +75,90 @@ export const logsRouter = router({
       return {
         logs: rows,
         total: countResult[0]?.count ?? 0,
+        limit,
+        offset,
+      };
+    }),
+
+  getLogsWithCounts: publicProcedure
+    .input(
+      z.object({
+        timeRange: z.enum(["30m", "1h", "24h", "7d"]).default("24h"),
+        level: z.array(z.enum(["info", "warn", "error", "debug"])).optional(),
+        statusMin: z.number().optional(),
+        path: z.string().optional(),
+        search: z.string().optional(),
+        limit: z.number().min(1).max(100).default(100),
+        offset: z.number().min(0).default(0),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { timeRange, level, statusMin, path, search, limit, offset } = input;
+
+      const sinceMinutes = timeRangeMinutes[timeRange];
+      const sinceTime = new Date(Date.now() - sinceMinutes * 60 * 1000).toISOString();
+
+      const baseConditions = [sql`${logs.created_at} >= ${sinceTime}`];
+
+      if (level && level.length > 0) {
+        baseConditions.push(sql`${logs.level} IN (${sql.join(level.map(l => sql`${l}`), sql`, `)})`);
+      }
+      if (statusMin) {
+        baseConditions.push(sql`${logs.status} >= ${statusMin}`);
+      }
+      if (path) {
+        baseConditions.push(like(logs.path, `%${path}%`));
+      }
+      if (search) {
+        baseConditions.push(
+          or(
+            like(logs.path, `%${search}%`),
+            like(logs.data, `%${search}%`)
+          )!
+        );
+      }
+
+      const whereClause = and(...baseConditions);
+
+      const [rows, countResult, levelCountsResult] = await Promise.all([
+        ctx.db
+          .select(logSelect)
+          .from(logs)
+          .where(whereClause)
+          .orderBy(desc(logs.timestamp))
+          .limit(limit)
+          .offset(offset),
+        ctx.db
+          .select({ count: sql<number>`count(*)` })
+          .from(logs)
+          .where(whereClause),
+        ctx.db
+          .select({
+            level: logs.level,
+            count: sql<number>`count(*)`,
+          })
+          .from(logs)
+          .where(sql`${logs.created_at} >= ${sinceTime}`)
+          .groupBy(logs.level),
+      ]);
+
+      const levelCounts = {
+        error: 0,
+        warn: 0,
+        info: 0,
+        debug: 0,
+      };
+
+      for (const row of levelCountsResult) {
+        if (row.level in levelCounts) {
+          levelCounts[row.level as keyof typeof levelCounts] = row.count;
+        }
+      }
+
+      return {
+        logs: rows,
+        total: countResult[0]?.count ?? 0,
+        levelCounts,
         limit,
         offset,
       };

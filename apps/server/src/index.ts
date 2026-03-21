@@ -2,15 +2,25 @@ import { trpcServer } from "@hono/trpc-server";
 import { createContext } from "@my-better-t-app/api/context";
 import { appRouter } from "@my-better-t-app/api/routers/index";
 import { auth } from "@my-better-t-app/auth";
-import { db } from "@my-better-t-app/db";
 import { env } from "@my-better-t-app/env/server";
-import { logs } from "@my-better-t-app/db/schema/logs";
+import { drizzle } from "drizzle-orm/d1";
+import * as schema from "@my-better-t-app/db/schema";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import type { DrainContext } from "evlog";
+import type { D1Database } from "@cloudflare/workers-types";
 
-const app = new Hono();
+type CloudflareEnv = {
+  DB: D1Database;
+  CORS_ORIGIN: string;
+  BETTER_AUTH_SECRET: string;
+  BETTER_AUTH_URL: string;
+  POLAR_ACCESS_TOKEN: string;
+  POLAR_SUCCESS_URL: string;
+};
+
+const app = new Hono<{ Bindings: CloudflareEnv }>();
 
 app.use(logger());
 app.use(
@@ -50,21 +60,34 @@ app.post('/ingest', async (c) => {
   const path: string | null = request?.path ?? null
   const status: number | null = typeof event.status === 'number' ? event.status : null
 
-  await db.insert(logs).values({
-    id,
-    timestamp: event.timestamp,
-    level: event.level,
-    service: event.service,
-    environment: event.environment,
-    method,
-    path,
-    status,
-    duration_ms: null,
-    request_id: request?.requestId ?? null,
-    error: errorField,
-    data: JSON.stringify(event),
-    created_at: new Date().toISOString(),
-  })
+  try {
+    const d1 = c.env.DB
+    console.log('D1 binding:', d1)
+    console.log('Inserting log:', { id, level: event.level, service: event.service })
+
+    const localDb = drizzle(d1, { schema })
+
+    await localDb.insert(schema.logs).values({
+      id,
+      timestamp: event.timestamp,
+      level: event.level,
+      service: event.service,
+      environment: event.environment,
+      method,
+      path,
+      status,
+      duration_ms: null,
+      request_id: request?.requestId ?? null,
+      error: errorField,
+      data: JSON.stringify(event),
+      created_at: new Date().toISOString(),
+    })
+
+    console.log('Insert successful:', id)
+  } catch (err) {
+    console.error('Insert failed:', err)
+    return c.json({ ok: false, error: String(err) }, 500)
+  }
 
   return c.json({ ok: true, id })
 })
