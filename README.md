@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# my-better-t-app
+
+This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, TRPC, and more.
+
+## Features
+
+- **TypeScript** - For type safety and improved developer experience
+- **TanStack Router** - File-based routing with full type safety
+- **TailwindCSS** - Utility-first CSS for rapid UI development
+- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
+- **Hono** - Lightweight, performant server framework
+- **tRPC** - End-to-end type-safe APIs
+- **workers** - Runtime environment
+- **Drizzle** - TypeScript-first ORM
+- **SQLite/Turso** - Database engine
+- **Authentication** - Better-Auth
+- **Turborepo** - Optimized monorepo build system
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project uses SQLite with Drizzle ORM.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Start the local SQLite database (optional):
+   D1 local development and migrations are handled automatically by Alchemy during dev and deploy.
 
-## Learn More
+2. Update your `.env` file in the `apps/server` directory with the appropriate connection details if needed.
 
-To learn more about Next.js, take a look at the following resources:
+3. Apply the schema to your database:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+bun run db:push
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Then, run the development server:
 
-## Deploy on Vercel
+```bash
+bun run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
+The API is running at [http://localhost:3000](http://localhost:3000).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## UI Customization
+
+React web apps in this stack share shadcn/ui primitives through `packages/ui`.
+
+- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
+- Update shared primitives in `packages/ui/src/components/*`
+- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
+
+### Add more shared components
+
+Run this from the project root to add more primitives to the shared UI package:
+
+```bash
+npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+```
+
+Import shared components like this:
+
+```tsx
+import { Button } from "@my-better-t-app/ui/components/button";
+```
+
+### Add app-specific blocks
+
+If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+
+## Deployment (Cloudflare via Alchemy)
+
+- Dev: bun run dev
+- Deploy: bun run deploy
+- Destroy: bun run destroy
+
+For more details, see the guide on [Deploying to Cloudflare with Alchemy](https://www.better-t-stack.dev/docs/guides/cloudflare-alchemy).
+
+## Project Structure
+
+```
+my-better-t-app/
+├── apps/
+│   ├── web/         # Frontend application (React + TanStack Router)
+│   └── server/      # Backend API (Hono, TRPC)
+├── packages/
+│   ├── ui/          # Shared shadcn/ui components and styles
+│   ├── api/         # API layer / business logic
+│   ├── auth/        # Authentication configuration & logic
+│   └── db/          # Database schema & queries
+```
+
+## Available Scripts
+
+- `bun run dev`: Start all applications in development mode
+- `bun run build`: Build all applications
+- `bun run dev:web`: Start only the web application
+- `bun run dev:server`: Start only the server
+- `bun run check-types`: Check TypeScript types across all apps
+- `bun run db:push`: Push schema changes to database
+- `bun run db:generate`: Generate database client/types
