@@ -16,6 +16,7 @@
     "@trpc/server": "catalog:",
     "better-auth": "catalog:",
     "dotenv": "catalog:",
+    "evlog": "^2.9.0",
     "hono": "catalog:",
     "zod": "catalog:"
   },
