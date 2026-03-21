@@ -36,4 +36,10 @@ app.get("/", (c) => {
   return c.text("OK");
 });
 
+app.post('/ingest', async (c) => {
+  const event = await c.req.json()
+  console.log('received log:', JSON.stringify(event, null, 2))
+  return c.json({ ok: true })
+})
+
 export default app;
