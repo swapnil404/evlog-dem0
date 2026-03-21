@@ -2,10 +2,13 @@ import { trpcServer } from "@hono/trpc-server";
 import { createContext } from "@my-better-t-app/api/context";
 import { appRouter } from "@my-better-t-app/api/routers/index";
 import { auth } from "@my-better-t-app/auth";
+import { db } from "@my-better-t-app/db";
 import { env } from "@my-better-t-app/env/server";
+import { logs } from "@my-better-t-app/db/schema/logs";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import type { DrainContext } from "evlog";
 
 const app = new Hono();
 
@@ -37,9 +40,33 @@ app.get("/", (c) => {
 });
 
 app.post('/ingest', async (c) => {
-  const event = await c.req.json()
-  console.log('received log:', JSON.stringify(event, null, 2))
-  return c.json({ ok: true })
+  const ctx = await c.req.json<DrainContext>()
+  const id = crypto.randomUUID()
+  const event = ctx.event
+  const request = ctx.request
+
+  const errorField = event.error ? JSON.stringify(event.error) : null
+  const method: string | null = request?.method ?? null
+  const path: string | null = request?.path ?? null
+  const status: number | null = typeof event.status === 'number' ? event.status : null
+
+  await db.insert(logs).values({
+    id,
+    timestamp: event.timestamp,
+    level: event.level,
+    service: event.service,
+    environment: event.environment,
+    method,
+    path,
+    status,
+    duration_ms: null,
+    request_id: request?.requestId ?? null,
+    error: errorField,
+    data: JSON.stringify(event),
+    created_at: new Date().toISOString(),
+  })
+
+  return c.json({ ok: true, id })
 })
 
 export default app;
