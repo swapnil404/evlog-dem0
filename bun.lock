@@ -95,6 +95,7 @@
         "@trpc/client": "catalog:",
         "@trpc/server": "catalog:",
         "dotenv": "catalog:",
+        "drizzle-orm": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -203,6 +204,7 @@
     "alchemy": "^0.87.0",
     "better-auth": "1.5.2",
     "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.45.1",
     "hono": "^4.8.2",
     "libsql": "0.5.22",
     "lucide-react": "^0.546.0",
