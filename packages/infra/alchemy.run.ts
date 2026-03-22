@@ -35,6 +35,8 @@ export const server = await Worker("server", {
     POLAR_SUCCESS_URL: alchemy.env.POLAR_SUCCESS_URL!,
     GITHUB_CLIENT_ID: alchemy.env.GITHUB_CLIENT_ID!,
     GITHUB_CLIENT_SECRET: alchemy.secret.env.GITHUB_CLIENT_SECRET!,
+    GOOGLE_CLIENT_ID: alchemy.env.GOOGLE_CLIENT_ID!,
+    GOOGLE_CLIENT_SECRET: alchemy.secret.env.GOOGLE_CLIENT_SECRET!,
   },
   dev: {
     port: 3000,

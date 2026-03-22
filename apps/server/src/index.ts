@@ -20,6 +20,8 @@ type CloudflareEnv = {
   POLAR_SUCCESS_URL: string;
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
 };
 
 const app = new Hono<{ Bindings: CloudflareEnv }>();
