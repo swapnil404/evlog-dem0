@@ -12,12 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as StorageRouteImport } from './routes/storage'
 import { Route as ProjectRouteImport } from './routes/project'
+import { Route as LogsRouteImport } from './routes/logs'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectIndexRouteImport } from './routes/project/index'
 import { Route as ProjectSettingsRouteImport } from './routes/project/settings'
-import { Route as ProjectLogsRouteImport } from './routes/project/logs'
 
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
@@ -32,6 +32,11 @@ const StorageRoute = StorageRouteImport.update({
 const ProjectRoute = ProjectRouteImport.update({
   id: '/project',
   path: '/project',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogsRoute = LogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -59,20 +64,15 @@ const ProjectSettingsRoute = ProjectSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => ProjectRoute,
 } as any)
-const ProjectLogsRoute = ProjectLogsRouteImport.update({
-  id: '/logs',
-  path: '/logs',
-  getParentRoute: () => ProjectRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/logs': typeof LogsRoute
   '/project': typeof ProjectRouteWithChildren
   '/storage': typeof StorageRoute
   '/success': typeof SuccessRoute
-  '/project/logs': typeof ProjectLogsRoute
   '/project/settings': typeof ProjectSettingsRoute
   '/project/': typeof ProjectIndexRoute
 }
@@ -80,9 +80,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/logs': typeof LogsRoute
   '/storage': typeof StorageRoute
   '/success': typeof SuccessRoute
-  '/project/logs': typeof ProjectLogsRoute
   '/project/settings': typeof ProjectSettingsRoute
   '/project': typeof ProjectIndexRoute
 }
@@ -91,10 +91,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/logs': typeof LogsRoute
   '/project': typeof ProjectRouteWithChildren
   '/storage': typeof StorageRoute
   '/success': typeof SuccessRoute
-  '/project/logs': typeof ProjectLogsRoute
   '/project/settings': typeof ProjectSettingsRoute
   '/project/': typeof ProjectIndexRoute
 }
@@ -104,10 +104,10 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/logs'
     | '/project'
     | '/storage'
     | '/success'
-    | '/project/logs'
     | '/project/settings'
     | '/project/'
   fileRoutesByTo: FileRoutesByTo
@@ -115,9 +115,9 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/logs'
     | '/storage'
     | '/success'
-    | '/project/logs'
     | '/project/settings'
     | '/project'
   id:
@@ -125,10 +125,10 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/login'
+    | '/logs'
     | '/project'
     | '/storage'
     | '/success'
-    | '/project/logs'
     | '/project/settings'
     | '/project/'
   fileRoutesById: FileRoutesById
@@ -137,6 +137,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  LogsRoute: typeof LogsRoute
   ProjectRoute: typeof ProjectRouteWithChildren
   StorageRoute: typeof StorageRoute
   SuccessRoute: typeof SuccessRoute
@@ -163,6 +164,13 @@ declare module '@tanstack/react-router' {
       path: '/project'
       fullPath: '/project'
       preLoaderRoute: typeof ProjectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logs': {
+      id: '/logs'
+      path: '/logs'
+      fullPath: '/logs'
+      preLoaderRoute: typeof LogsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -200,24 +208,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectSettingsRouteImport
       parentRoute: typeof ProjectRoute
     }
-    '/project/logs': {
-      id: '/project/logs'
-      path: '/logs'
-      fullPath: '/project/logs'
-      preLoaderRoute: typeof ProjectLogsRouteImport
-      parentRoute: typeof ProjectRoute
-    }
   }
 }
 
 interface ProjectRouteChildren {
-  ProjectLogsRoute: typeof ProjectLogsRoute
   ProjectSettingsRoute: typeof ProjectSettingsRoute
   ProjectIndexRoute: typeof ProjectIndexRoute
 }
 
 const ProjectRouteChildren: ProjectRouteChildren = {
-  ProjectLogsRoute: ProjectLogsRoute,
   ProjectSettingsRoute: ProjectSettingsRoute,
   ProjectIndexRoute: ProjectIndexRoute,
 }
@@ -229,6 +228,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  LogsRoute: LogsRoute,
   ProjectRoute: ProjectRouteWithChildren,
   StorageRoute: StorageRoute,
   SuccessRoute: SuccessRoute,

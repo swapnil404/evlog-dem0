@@ -18,6 +18,8 @@ type CloudflareEnv = {
   BETTER_AUTH_URL: string;
   POLAR_ACCESS_TOKEN: string;
   POLAR_SUCCESS_URL: string;
+  GITHUB_CLIENT_ID: string;
+  GITHUB_CLIENT_SECRET: string;
 };
 
 const app = new Hono<{ Bindings: CloudflareEnv }>();
