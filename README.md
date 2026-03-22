@@ -1,6 +1,6 @@
-# my-better-t-app
+# dumper
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, TRPC, and more.
+A modern TypeScript stack for building web applications.
 
 ## Features
 
@@ -24,6 +24,18 @@ First, install the dependencies:
 bun install
 ```
 
+## Environment Setup
+
+1. Copy the environment example files:
+
+```bash
+cp apps/web/.env.example apps/web/.env
+cp apps/server/.env.example apps/server/.env
+cp .env.example .env
+```
+
+2. Update the `.env` files with your actual values (see Environment Variables section below).
+
 ## Database Setup
 
 This project uses SQLite with Drizzle ORM.
@@ -31,9 +43,7 @@ This project uses SQLite with Drizzle ORM.
 1. Start the local SQLite database (optional):
    D1 local development and migrations are handled automatically by Alchemy during dev and deploy.
 
-2. Update your `.env` file in the `apps/server` directory with the appropriate connection details if needed.
-
-3. Apply the schema to your database:
+2. Apply the schema to your database:
 
 ```bash
 bun run db:push
@@ -47,6 +57,22 @@ bun run dev
 
 Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
 The API is running at [http://localhost:3000](http://localhost:3000).
+
+## Environment Variables
+
+### Root (`.env`)
+- `ALCHEMY_PASSWORD` - **Required** for Alchemy secret encryption (generate with `openssl rand -base64 24`)
+
+### Web App (`apps/web/.env`)
+- `VITE_SERVER_URL` - URL of the backend server (e.g., `http://localhost:3000`)
+
+### Server (`apps/server/.env`)
+- `ALCHEMY_PASSWORD` - **Required** for Alchemy secret encryption (same as root .env)
+- `CORS_ORIGIN` - Allowed CORS origin (e.g., `http://localhost:3001`)
+- `BETTER_AUTH_SECRET` - Secret key for Better-Auth (generate with `openssl rand -base64 32`)
+- `BETTER_AUTH_URL` - URL for auth endpoints (e.g., `http://localhost:3000`)
+- `POLAR_ACCESS_TOKEN` - Polar.sh API access token (optional, for payments)
+- `POLAR_SUCCESS_URL` - URL to redirect after successful checkout
 
 ## UI Customization
 
@@ -67,7 +93,7 @@ npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
 Import shared components like this:
 
 ```tsx
-import { Button } from "@my-better-t-app/ui/components/button";
+import { Button } from "@dumper/ui/components/button";
 ```
 
 ### Add app-specific blocks
@@ -85,7 +111,7 @@ For more details, see the guide on [Deploying to Cloudflare with Alchemy](https:
 ## Project Structure
 
 ```
-my-better-t-app/
+dumper/
 ├── apps/
 │   ├── web/         # Frontend application (React + TanStack Router)
 │   └── server/      # Backend API (Hono, TRPC)
@@ -93,7 +119,10 @@ my-better-t-app/
 │   ├── ui/          # Shared shadcn/ui components and styles
 │   ├── api/         # API layer / business logic
 │   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
+│   ├── db/          # Database schema & queries
+│   ├── env/         # Environment configuration
+│   ├── config/      # Shared configuration
+│   └── infra/       # Infrastructure/Deployment config
 ```
 
 ## Available Scripts

@@ -1,10 +1,10 @@
 import { trpcServer } from "@hono/trpc-server";
-import { createContext } from "@my-better-t-app/api/context";
-import { appRouter } from "@my-better-t-app/api/routers/index";
-import { auth } from "@my-better-t-app/auth";
-import { env } from "@my-better-t-app/env/server";
+import { createContext } from "@dumper/api/context";
+import { appRouter } from "@dumper/api/routers/index";
+import { auth } from "@dumper/auth";
+import { env } from "@dumper/env/server";
 import { drizzle } from "drizzle-orm/d1";
-import * as schema from "@my-better-t-app/db/schema";
+import * as schema from "@dumper/db/schema";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";

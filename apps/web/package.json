@@ -13,10 +13,10 @@
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
     "@libsql/client": "catalog:",
-    "@my-better-t-app/api": "workspace:*",
-    "@my-better-t-app/auth": "workspace:*",
-    "@my-better-t-app/env": "workspace:*",
-    "@my-better-t-app/ui": "workspace:*",
+    "@dumper/api": "workspace:*",
+    "@dumper/auth": "workspace:*",
+    "@dumper/env": "workspace:*",
+    "@dumper/ui": "workspace:*",
     "@polar-sh/better-auth": "catalog:",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-form": "^1.28.0",
@@ -36,7 +36,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@my-better-t-app/config": "workspace:*",
+    "@dumper/config": "workspace:*",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@tanstack/react-router-devtools": "^1.141.1",
     "@tanstack/router-plugin": "^1.141.1",

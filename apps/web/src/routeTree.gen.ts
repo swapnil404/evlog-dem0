@@ -10,24 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessRouteImport } from './routes/success'
-import { Route as LogsRouteImport } from './routes/logs'
-import { Route as LoginRouteImport } from './routes/login'
+import { Route as StorageRouteImport } from './routes/storage'
+import { Route as ProjectRouteImport } from './routes/project'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectIndexRouteImport } from './routes/project/index'
+import { Route as ProjectSettingsRouteImport } from './routes/project/settings'
+import { Route as ProjectLogsRouteImport } from './routes/project/logs'
 
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LogsRoute = LogsRouteImport.update({
-  id: '/logs',
-  path: '/logs',
+const StorageRoute = StorageRouteImport.update({
+  id: '/storage',
+  path: '/storage',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const ProjectRoute = ProjectRouteImport.update({
+  id: '/project',
+  path: '/project',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -40,42 +43,89 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectIndexRoute = ProjectIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProjectRoute,
+} as any)
+const ProjectSettingsRoute = ProjectSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ProjectRoute,
+} as any)
+const ProjectLogsRoute = ProjectLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => ProjectRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/logs': typeof LogsRoute
+  '/project': typeof ProjectRouteWithChildren
+  '/storage': typeof StorageRoute
   '/success': typeof SuccessRoute
+  '/project/logs': typeof ProjectLogsRoute
+  '/project/settings': typeof ProjectSettingsRoute
+  '/project/': typeof ProjectIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/logs': typeof LogsRoute
+  '/storage': typeof StorageRoute
   '/success': typeof SuccessRoute
+  '/project/logs': typeof ProjectLogsRoute
+  '/project/settings': typeof ProjectSettingsRoute
+  '/project': typeof ProjectIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
-  '/login': typeof LoginRoute
-  '/logs': typeof LogsRoute
+  '/project': typeof ProjectRouteWithChildren
+  '/storage': typeof StorageRoute
   '/success': typeof SuccessRoute
+  '/project/logs': typeof ProjectLogsRoute
+  '/project/settings': typeof ProjectSettingsRoute
+  '/project/': typeof ProjectIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/logs' | '/success'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/project'
+    | '/storage'
+    | '/success'
+    | '/project/logs'
+    | '/project/settings'
+    | '/project/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/logs' | '/success'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/logs' | '/success'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/storage'
+    | '/success'
+    | '/project/logs'
+    | '/project/settings'
+    | '/project'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/project'
+    | '/storage'
+    | '/success'
+    | '/project/logs'
+    | '/project/settings'
+    | '/project/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
-  LoginRoute: typeof LoginRoute
-  LogsRoute: typeof LogsRoute
+  ProjectRoute: typeof ProjectRouteWithChildren
+  StorageRoute: typeof StorageRoute
   SuccessRoute: typeof SuccessRoute
 }
 
@@ -88,18 +138,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/logs': {
-      id: '/logs'
-      path: '/logs'
-      fullPath: '/logs'
-      preLoaderRoute: typeof LogsRouteImport
+    '/storage': {
+      id: '/storage'
+      path: '/storage'
+      fullPath: '/storage'
+      preLoaderRoute: typeof StorageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/project': {
+      id: '/project'
+      path: '/project'
+      fullPath: '/project'
+      preLoaderRoute: typeof ProjectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -116,14 +166,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/project/': {
+      id: '/project/'
+      path: '/'
+      fullPath: '/project/'
+      preLoaderRoute: typeof ProjectIndexRouteImport
+      parentRoute: typeof ProjectRoute
+    }
+    '/project/settings': {
+      id: '/project/settings'
+      path: '/settings'
+      fullPath: '/project/settings'
+      preLoaderRoute: typeof ProjectSettingsRouteImport
+      parentRoute: typeof ProjectRoute
+    }
+    '/project/logs': {
+      id: '/project/logs'
+      path: '/logs'
+      fullPath: '/project/logs'
+      preLoaderRoute: typeof ProjectLogsRouteImport
+      parentRoute: typeof ProjectRoute
+    }
   }
 }
+
+interface ProjectRouteChildren {
+  ProjectLogsRoute: typeof ProjectLogsRoute
+  ProjectSettingsRoute: typeof ProjectSettingsRoute
+  ProjectIndexRoute: typeof ProjectIndexRoute
+}
+
+const ProjectRouteChildren: ProjectRouteChildren = {
+  ProjectLogsRoute: ProjectLogsRoute,
+  ProjectSettingsRoute: ProjectSettingsRoute,
+  ProjectIndexRoute: ProjectIndexRoute,
+}
+
+const ProjectRouteWithChildren =
+  ProjectRoute._addFileChildren(ProjectRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
-  LoginRoute: LoginRoute,
-  LogsRoute: LogsRoute,
+  ProjectRoute: ProjectRouteWithChildren,
+  StorageRoute: StorageRoute,
   SuccessRoute: SuccessRoute,
 }
 export const routeTree = rootRouteImport

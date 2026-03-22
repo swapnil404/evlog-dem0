@@ -1,6 +1,6 @@
-import { db } from "@my-better-t-app/db";
-import * as schema from "@my-better-t-app/db/schema/auth";
-import { env } from "@my-better-t-app/env/server";
+import { db } from "@dumper/db";
+import * as schema from "@dumper/db/schema/auth";
+import { env } from "@dumper/env/server";
 import { polar, checkout, portal } from "@polar-sh/better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";

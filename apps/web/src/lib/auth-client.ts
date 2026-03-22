@@ -1,4 +1,4 @@
-import { env } from "@my-better-t-app/env/web";
+import { env } from "@dumper/env/web";
 import { polarClient } from "@polar-sh/better-auth";
 import { createAuthClient } from "better-auth/react";
 

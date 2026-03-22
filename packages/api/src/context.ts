@@ -1,7 +1,7 @@
-import { auth } from "@my-better-t-app/auth";
+import { auth } from "@dumper/auth";
 import { drizzle } from "drizzle-orm/d1";
 import type { Context as HonoContext } from "hono";
-import * as schema from "@my-better-t-app/db/schema";
+import * as schema from "@dumper/db/schema";
 
 export type CreateContextOptions = {
   context: HonoContext;

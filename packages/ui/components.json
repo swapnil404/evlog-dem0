@@ -1,6 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "base-lyra",
+  "style": "radix-nova",
   "rsc": false,
   "tsx": true,
   "tailwind": {
@@ -12,11 +12,11 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@my-better-t-app/ui/components",
-    "utils": "@my-better-t-app/ui/lib/utils",
-    "hooks": "@my-better-t-app/ui/hooks",
-    "lib": "@my-better-t-app/ui/lib",
-    "ui": "@my-better-t-app/ui/components"
+    "components": "@dumper/ui/components",
+    "utils": "@dumper/ui/lib/utils",
+    "hooks": "@dumper/ui/hooks",
+    "lib": "@dumper/ui/lib",
+    "ui": "@dumper/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

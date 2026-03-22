@@ -1,7 +1,7 @@
 import { eq, like, and, sql, desc, or } from "drizzle-orm";
 import { z } from "zod";
 import { publicProcedure, router } from "../index";
-import { logs } from "@my-better-t-app/db/schema";
+import { logs } from "@dumper/db/schema";
 
 const logSelect = {
   id: logs.id,
