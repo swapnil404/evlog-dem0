@@ -5,6 +5,7 @@ import {
   HeadContent,
   Outlet,
   createRootRouteWithContext,
+  useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
@@ -31,6 +32,9 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function RootComponent() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+
   return (
     <>
       <HeadContent />
@@ -41,7 +45,7 @@ function RootComponent() {
         storageKey="dumper-theme"
       >
         <div className="flex flex-col h-screen bg-background">
-          <Topbar />
+          {!isLoginPage && <Topbar />}
           <Outlet />
         </div>
         <Toaster richColors />
